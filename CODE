@@ -1,0 +1,873 @@
+create table if not exists location
+(
+	id_loc serial not null
+		constraint location_pk
+			primary key,
+	name text not null
+);
+
+alter table location owner to postgres;
+
+create table if not exists player
+(
+	id_pl serial not null
+		constraint player_pk
+			primary key,
+	name text not null,
+	hp integer not null,
+	mp integer not null,
+	st integer not null,
+	int integer not null,
+	soul integer not null,
+	power integer not null,
+	dex integer not null,
+	"Travel_Speed" integer not null,
+	id_loc integer
+		constraint player_location_id_loc_fk
+			references location
+);
+
+alter table player owner to postgres;
+
+create table if not exists arms
+(
+	id_arms serial not null
+		constraint arms_pk
+			primary key,
+	damage integer not null,
+	name text not null,
+	attack_type text not null,
+	ability text not null,
+	id_pl integer
+		constraint arms_player_id_pl_fk
+			references player
+				on delete set null,
+	weight integer not null
+);
+
+alter table arms owner to postgres;
+
+create table if not exists mobile_obj
+(
+	id_mo serial not null
+		constraint mobile_obj_pk
+			primary key,
+	name text not null,
+	hp integer not null,
+	dam integer not null,
+	soul integer not null
+);
+
+alter table mobile_obj owner to postgres;
+
+create table if not exists boss
+(
+	id_boss serial not null
+		constraint boss_pk
+			primary key,
+	name text not null,
+	hp integer not null,
+	dam integer not null,
+	soul integer not null,
+	id_loc integer
+		constraint boss_location_id_loc_fk
+			references location
+				on delete set null
+);
+
+alter table boss owner to postgres;
+
+create table if not exists armor
+(
+	id_armor serial not null
+		constraint armor_pk
+			primary key,
+	protection integer not null,
+	weight integer not null,
+	name text,
+	id_pl integer
+		constraint armor_player_id_pl_fk
+			references player
+				on delete set null,
+	id_armor_for_boss integer
+		constraint armor_boss_id_boss_fk
+			references boss
+);
+
+alter table armor owner to postgres;
+
+create table if not exists arms_in_mo
+(
+	position integer,
+	id_arms integer
+		constraint arms_in_mo_arms_id_arms_fk
+			references arms,
+	id_mo integer
+		constraint arms_in_mo_mobile_obj_id_mo_fk
+			references mobile_obj
+);
+
+alter table arms_in_mo owner to postgres;
+
+create table if not exists armor_on_mo
+(
+	position integer,
+	id_armor integer
+		constraint armor_on_mo_armor_id_armor_fk
+			references armor,
+	id_mo integer
+		constraint armor_on_mo_mobile_obj_id_mo_fk
+			references mobile_obj
+);
+
+alter table armor_on_mo owner to postgres;
+
+create table if not exists mo_in_loc
+(
+	id_loc integer
+		constraint mo_in_loc_location_id_loc_fk
+			references location,
+	id_mo integer
+		constraint mo_in_loc_mobile_obj_id_mo_fk
+			references mobile_obj
+);
+
+alter table mo_in_loc owner to postgres;
+
+create table if not exists boss_and_arms
+(
+	id_boss integer
+		constraint boss_and_arms_boss_id_boss_fk
+			references boss,
+	id_arms integer
+		constraint boss_and_arms_arms_id_arms_fk
+			references arms
+);
+
+/*
+ location
+ */
+
+INSERT INTO location (id_loc, name)
+VALUES (1, 'fire_temple');
+
+INSERT INTO location (id_loc, name)
+VALUES (2, 'Farron_Citadel');
+
+INSERT INTO location (id_loc, name)
+VALUES (3, 'Great_Archive');
+
+INSERT INTO location (id_loc, name)
+VALUES (4, 'Furnace of the_First_Flame');
+
+INSERT INTO location (id_loc, name)
+VALUES (5, 'Lothric castle');
+
+INSERT INTO location (id_loc, name)
+VALUES (6, 'Settlement of the undead');
+
+INSERT INTO location (id_loc, name)
+VALUES (7, 'Irithyll Dungeon');
+
+INSERT INTO location (id_loc, name)
+VALUES (8, 'High Wall of Lothric');
+
+INSERT INTO location (id_loc, name)
+VALUES (9, 'Farron Citadel');
+
+INSERT INTO location (id_loc, name)
+VALUES (10, 'Temple of the Deep');
+
+INSERT INTO location (id_loc, name)
+VALUES (11, 'Ash graveyard');
+
+INSERT INTO location (id_loc, name)
+VALUES (12, 'Archdragon Peak');
+
+INSERT INTO location (id_loc, name)
+VALUES (13, 'Large bell tower');
+
+INSERT INTO location (id_loc, name)
+VALUES (14, 'Catacombs of Carthus');
+
+INSERT INTO location (id_loc, name)
+VALUES (15, 'Profaned capital');
+
+INSERT INTO location (id_loc, name)
+VALUES (16, 'Irithyll of the Boreal Valley');
+
+INSERT INTO public.location (id_loc, name)
+VALUES (17, 'Anor Londo');
+
+alter table boss_and_arms owner to postgres;
+/*
+ player
+ */
+INSERT INTO player (id_pl, name, hp, mp, st, int, soul, power, dex, "Travel_Speed", id_loc)
+VALUES (1, 'A', 1000, 150, 120, 28, 11200, 18, 20, 10, 1);
+/*
+ boss
+ */
+
+ INSERT INTO boss (id_boss, name, hp, dam, soul, id_loc)
+VALUES (1, 'Abyss_Watchers', 3096, 125, 18000, 2);
+
+INSERT INTO boss (id_boss, name, hp, dam, soul, id_loc)
+VALUES (4, 'Soul_of_Cinder', 10500, 218, 100000, 4);
+
+INSERT INTO boss (id_boss, name, hp, dam, soul, id_loc)
+VALUES (2, 'Dragonslayer_Armour', 4600, 250, 64000, 5);
+
+INSERT INTO boss (id_boss, name, hp, dam, soul, id_loc)
+VALUES (3, 'Lothric, Younger Prince, Lorian, Elder Prince', 7800, 230, 85000, 3);
+
+INSERT INTO boss (id_boss, name, hp, dam, soul, id_loc)
+VALUES (5, 'Iudex Gundyr', 1037, 150, 3000, 11);
+
+INSERT INTO boss (id_boss, name, hp, dam, soul, id_loc)
+VALUES (6, 'Champion Gundyr', 4956, 200, 60000, 11);
+
+INSERT INTO boss (id_boss, name, hp, dam, soul, id_loc)
+VALUES (7, 'High Lord Wolnir', 7052, 220, 22000, 14);
+
+INSERT INTO boss (id_boss, name, hp, dam, soul, id_loc)
+VALUES (8, 'Yhorm the Giant', 27822, 300, 36000, 15);
+
+INSERT INTO boss (id_boss, name, hp, dam, soul, id_loc)
+VALUES (9, 'Dancer of the Boreal Valley', 5111, 300, 60000, 5);
+
+INSERT INTO boss (id_boss, name, hp, dam, soul, id_loc)
+VALUES (10, 'Pontiff Sulyvahn', 5106, 190, 28000, 16);
+
+/*
+ armor
+ */
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (1, 23, 22, 'Set_Alva', 1, null);
+
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (2, 25, 25, 'Set_Knight', 1, null);
+
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (3, 30, 39, 'Set_Morna', null, null);
+
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (4, 13, 10, 'Set_Worker', 1, null);
+
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (5, 20, 16, 'Set_Deserter', 1, null);
+
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (6, 19, 18, 'Undead_Legion_Set', null, 1);
+
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (7, 25, 30, 'Lorian_Armor_Set', null, 3);
+
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (8, 32, 35, 'Iron_Dragonslayer_Set', 1, 2);
+
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (9, 22, 20, 'Firelink_Set', null, 4);
+
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (10, 24, 22, 'Evangelist Set', null, null);
+
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (11, 23, 23, 'Eastern armor set', 1, null);
+
+INSERT INTO armor (id_armor, protection, weight, name, id_pl, id_armor_for_boss)
+VALUES (12, 20, 17, 'Dancer''s Set', null, 9);
+
+
+/*
+ mobile_obj
+ */
+
+INSERT INTO mobile_obj (id_mo, name, hp, dam, soul)
+VALUES (1, 'Hollow Soldier', 150, 100, 80);
+
+INSERT INTO mobile_obj (id_mo, name, hp, dam, soul)
+VALUES (2, 'Peasant Hollow', 200, 80, 80);
+
+INSERT INTO mobile_obj (id_mo, name, hp, dam, soul)
+VALUES (3, 'Cathedral Evangelist', 600, 160, 380);
+/*
+ arms
+ */
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (1, 125, 'Farron Greatsword', 'Normal / stabbing', 'Parry', 1, 12);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (2, 280, 'Dragonslayer Greataxe', 'Normal', 'Thunderstrike', null, 20);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (3, 218, 'Firelink Greatsword', 'Normal', 'coal', null, 9);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (4, 150, 'Staff of fire', 'Normal', 'magic', null, 11);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (5, 240, 'Lorian''s Greatsword', 'Normal / stabbing', 'Flame of Lorian', null, 14);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (6, 30, 'Light Crossbow', 'shot', 'Shoulder blow', 1, 3);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (7, 110, 'Longsword', 'Normal / stabbing', 'Rack', 1, 3);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (8, 105, 'Four-Pronged Plow', 'Normal / stabbing', 'Onslaught', null, 6);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (9, 149, 'Spiked Mace', 'Crushing', 'Sharp roundhouse kick', null, 16);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (10, 145, 'Gundyr''s Halberd', 'Normal', 'Champion''s Rush', 1, 13);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (11, 124, ' Irithyll Straight Sword', 'Normal / stabbing', 'Rack', 1, 4);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (12, 112, 'Sunlight Straight Sword', 'Normal / stabbing', 'The Oath of the Sun', 1, 3);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (13, 72, 'Murky Hand Scythe', 'Crushing', 'Crushing', 1, 2);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (14, 201, 'Dancer''s Enchanted Swords', 'Chopping', 'Dancer''s grace', null, 8);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (15, 185, 'Yhorm''s Great Machete', 'Normal', 'Battle cry', null, 19);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (16, 165, ' Profaned Greatsword', 'Normal / stabbing', 'Desecrated Flame', null, 13);
+
+INSERT INTO arms (id_arms, damage, name, attack_type, ability, id_pl, weight)
+VALUES (17, 199, 'Moonlight Greatsword', 'Normal', 'Whirlwind of moonlight', null, 10);
+
+
+
+/*
+ mo_in_loc
+ */
+
+INSERT INTO mo_in_loc (id_loc, id_mo)
+VALUES (8, 1);
+
+INSERT INTO mo_in_loc (id_loc, id_mo)
+VALUES (9, 1);
+
+INSERT INTO mo_in_loc (id_loc, id_mo)
+VALUES (5, 1);
+
+INSERT INTO mo_in_loc (id_loc, id_mo)
+VALUES (7, 2);
+
+INSERT INTO mo_in_loc (id_loc, id_mo)
+VALUES (6, 2);
+
+INSERT INTO mo_in_loc (id_loc, id_mo)
+VALUES (6, 3);
+
+INSERT INTO mo_in_loc (id_loc, id_mo)
+VALUES (10, 3);
+
+/*
+ armor_on_mo
+ */
+INSERT INTO armor_on_mo (position, id_armor, id_mo)
+VALUES (1, 10, 3);
+
+INSERT INTO armor_on_mo (position, id_armor, id_mo)
+VALUES (1, 5, 1);
+
+INSERT INTO armor_on_mo (position, id_armor, id_mo)
+VALUES (1, 4, 2);
+/*
+ arms_in_mo
+ */
+INSERT INTO arms_in_mo (position, id_arms, id_mo)
+VALUES (1, 7, 1);
+
+INSERT INTO arms_in_mo (position, id_arms, id_mo)
+VALUES (0, 6, 1);
+
+INSERT INTO arms_in_mo (position, id_arms, id_mo)
+VALUES (1, 8, 2);
+
+INSERT INTO arms_in_mo (position, id_arms, id_mo)
+VALUES (1, 9, 3);
+/*
+ boss_and_arms
+ */
+INSERT INTO boss_and_arms (id_boss, id_arms)
+VALUES (5, 10);
+
+INSERT INTO boss_and_arms (id_boss, id_arms)
+VALUES (6, 10);
+
+INSERT INTO boss_and_arms (id_boss, id_arms)
+VALUES (1, 1);
+
+INSERT INTO boss_and_arms (id_boss, id_arms)
+VALUES (2, 2);
+
+INSERT INTO boss_and_arms (id_boss, id_arms)
+VALUES (3, 5);
+
+INSERT INTO boss_and_arms (id_boss, id_arms)
+VALUES (4, 3);
+
+INSERT INTO boss_and_arms (id_boss, id_arms)
+VALUES (4, 4);
+
+INSERT INTO boss_and_arms (id_boss, id_arms)
+VALUES (9, 14);
+
+INSERT INTO boss_and_arms (id_boss, id_arms)
+VALUES (8, 15);
+
+INSERT INTO boss_and_arms (id_boss, id_arms)
+VALUES (10, 16);
+
+INSERT INTO boss_and_arms (id_boss, id_arms)
+VALUES (10, 17);
+
+
+/*------------------------DELETE------------------------*/
+DELETE
+FROM arms
+WHERE id_arms = 12;
+
+DELETE
+FROM arms
+WHERE id_arms = 11;
+
+
+DELETE
+FROM arms
+WHERE id_arms = 13;
+
+DELETE
+FROM armor
+WHERE id_armor = 3;
+
+DELETE
+FROM armor
+WHERE id_armor = 1;
+
+DELETE
+FROM armor
+WHERE id_armor = 2;
+
+DELETE
+FROM armor
+WHERE id_armor = 11;
+
+DELETE
+FROM location
+WHERE id_loc = 12;
+
+DELETE
+FROM location
+WHERE id_loc = 13;
+
+/*------------------------UPDATE------------------------*/
+
+UPDATE armor
+SET id_pl = 1
+WHERE id_armor = 6;
+
+UPDATE armor
+SET id_pl = 1
+WHERE id_armor = 7;
+
+UPDATE armor
+SET id_pl = 1
+WHERE id_armor = 9;
+
+UPDATE armor
+SET id_pl = 1
+WHERE id_armor = 10;
+
+UPDATE location
+SET name = 'Fire_temple'
+WHERE id_loc = 1;
+
+UPDATE player
+SET id_loc = 1
+WHERE id_pl = 1;
+
+UPDATE player
+SET id_loc = 2
+WHERE id_pl = 1;
+
+UPDATE player
+SET id_loc = 3
+WHERE id_pl = 1;
+
+UPDATE player
+SET id_loc = 4
+WHERE id_pl = 1;
+
+UPDATE arms
+SET id_pl = 1
+WHERE id_arms = 2;
+
+/*------------------------Индексы------------------------*/
+
+CREATE INDEX Nindex on location(name);
+
+DROP INDEX Nindex;
+
+CREATE INDEX Nindex_1 on location(name);
+
+CREATE INDEX Nindex_2 on player(name);
+
+CREATE INDEX Nindex_3 on boss(name);
+
+DROP INDEX Nindex_3;
+
+CREATE INDEX Nindex_4 on arms(name);
+
+CREATE INDEX Nindex_5 on armor(name);
+
+CREATE INDEX Nindex_6 on mobile_obj(name);
+
+/*------------------------SELECT------------------------*/
+
+/*В результате получим таблицу(отсортированную по урону) оружий с типом атак, весом и уроном,
+которые все кроме Normal и уронам больше 100, которые принадлежат игроку*/
+
+SELECT damage, name, attack_type, weight
+FROM arms
+WHERE damage > 100 AND attack_type not in ('Normal') and id_pl = 1
+ORDER BY damage DESC;
+
+/*В данной таблице я хочу получить сводку по типам атаки, и для каждого типа я хочу узнать
+сумарный вес всех оружий по типам
+(атака >100),а так же хочу убрать наобры тип атак, которые принадлежат икроку в нулевом либо в одном экземпляре*/
+
+SELECT attack_type, SUM(weight) as sum_weight
+FROM arms
+WHERE damage > 100
+GROUP BY attack_type
+HAVING count(arms.id_pl)>1;
+
+/*Хочу вывести рейтинг секций у игрока и не у игрока, по показателб защиты, и непосредственно, чтобы показатель был больше 20*/
+
+SELECT name,id_pl,protection,
+       row_number() OVER (PARTITION BY id_pl ORDER BY protection DESC)  AS rating
+FROM armor
+WHERE protection>20;
+/*
+ хочу получить суму защиты всех оружий у игрока и не у игрока
+ */
+SELECT id_pl,
+           SUM(sum(protection)) OVER (PARTITION BY id_pl) as SUMi
+FROM armor
+GROUP BY id_pl;
+
+/*
+ Прсто показывает сначало брою которая принадлежит сначала икроку,
+ а после все остальные, с знанием предведущего и будущей брони
+ */
+
+SELECT id_pl, id_armor,
+           lag(name) OVER (PARTITION BY id_pl order by weight) as weight_prev,
+           lead(name) over (PARTITION BY id_pl order by weight) as weight_next
+FROM armor;
+/*Хочу узнать где находятся боссы с кол-во душами > 20000 и их кол-во жизни*/
+
+SELECT boss.name, location.name, boss.hp as hp_boss
+FROM boss
+INNER JOIN location on boss.id_loc = location.id_loc
+WHERE boss.soul > 20000;
+
+/*М к М(мобы в локациях)*/
+
+SELECT foo.name as Name_MO, location.name as LOCATION
+from (SELECT mobile_obj.name, mo_in_loc.id_loc
+FROM mobile_obj
+INNER JOIN mo_in_loc on mo_in_loc.id_mo = mobile_obj.id_mo
+) as foo
+inner join location on location.id_loc = foo.id_loc;
+
+/*------------------------View------------------------*/
+
+CREATE VIEW m_k_m_of_mo_and_loc AS
+SELECT foo.name as Name_MO, location.name as LOCATION
+from (SELECT mobile_obj.name, mo_in_loc.id_loc
+FROM mobile_obj
+INNER JOIN mo_in_loc on mo_in_loc.id_mo = mobile_obj.id_mo
+) as foo
+inner join location on location.id_loc = foo.id_loc;
+
+CREATE VIEW o_k_m_of_b_in_loc AS
+SELECT boss.name as nameBoss,location.name as nameLoc
+from boss
+inner join location on location.id_loc = boss.id_loc;
+
+CREATE VIEW arms_Igroc_and_boss AS
+SELECT arms.name as arms_igroc_and_boss
+from boss_and_arms
+inner join arms on arms.id_arms = boss_and_arms.id_arms
+where arms.id_pl = 1 and arms.damage > 140;
+
+CREATE VIEW info_boss_bez_name AS
+select dam,hp,soul,case
+         when name = '' then 'Basketball'
+         else 'NONE'
+       end as nameboss
+from
+    boss;
+
+CREATE VIEW loc_info_test AS
+select id_loc,case
+         when id_loc = 1 then name
+         else 'NONE'
+       end as nameloc,
+       replace(replace(name,'a','*'),'A','*') as test
+from
+location;
+
+CREATE VIEW m_k_m_of_mo_and_loc_skrito AS
+select name_mo,
+       replace(replace(replace(replace(replace(location,'a','*'),'S','*'),'t','*'),'A','*'),'l','*') as test
+from m_k_m_of_mo_and_loc;
+
+/*------------------------Proc------------------------*/
+
+CREATE OR REPLACE PROCEDURE transaction_test()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    c int := 0;
+    i int := 0;
+    BEGIN
+       i = count(boss.id_boss)
+       from boss;
+        while i > c
+        loop
+            c = c + 1;
+            UPDATE boss
+            SET hp = hp + (hp)/3
+            WHERE id_boss = c;
+        end loop;
+    END
+$$;
+
+CALL transaction_test();
+
+CREATE OR REPLACE PROCEDURE transaction_test_1()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    c int := 0;
+    i int := 0;
+    BEGIN
+       i = count(boss.id_boss)
+       from boss;
+        while i > c
+        loop
+            c = c + 1;
+            UPDATE boss
+            SET hp = hp - (hp)/3
+            WHERE id_boss = c;
+        end loop;
+    END
+$$;
+
+CALL transaction_test_1();
+
+--defolt_hp_boss--
+
+
+UPDATE public.boss
+SET hp = 5106
+WHERE id_boss = 10;
+
+UPDATE public.boss
+SET hp = 7800
+WHERE id_boss = 4;
+
+UPDATE public.boss
+SET hp = 1037
+WHERE id_boss = 5;
+
+UPDATE public.boss
+SET hp = 7052
+WHERE id_boss = 7;
+
+UPDATE public.boss
+SET hp = 3096
+WHERE id_boss = 1;
+
+UPDATE public.boss
+SET hp = 4600
+WHERE id_boss = 3;
+
+UPDATE public.boss
+SET hp = 4956
+WHERE id_boss = 6;
+
+UPDATE public.boss
+SET hp = 10500
+WHERE id_boss = 2;
+
+UPDATE public.boss
+SET hp = 5111
+WHERE id_boss = 9;
+
+UPDATE public.boss
+SET hp = 27822
+WHERE id_boss = 8;
+
+/*------------------------TRUNCATE------------------------*/
+
+CREATE FUNCTION add_into()
+RETURNS integer AS $$
+declare
+    test integer := 0;
+    test_1 integer := 0;
+    begin
+    select boss_and_arms.id_arms into test
+    from boss_and_arms
+    where id_boss = 10;
+
+    select boss_and_arms.id_arms into test_1
+    from boss_and_arms
+    where id_boss = 10 and id_arms not in(test);
+
+    return test_1;
+    end;
+$$ LANGUAGE plpgsql;
+
+drop function add_into();
+
+select add_into();
+
+UPDATE public.boss
+SET hp = 10
+WHERE id_boss = 8;
+
+INSERT INTO public. boss (id_boss, name, hp, dam, soul, id_loc)
+VALUES (11, 'Aldrich, Devourer of Gods', 4727, 500, 50000, 17);
+
+select boss_and_arms.id_arms, arms.id_pl
+from boss_and_arms
+inner join arms on arms.id_arms = boss_and_arms.id_arms;
+
+delete
+from boss
+where id_loc = 17;
+
+select boss_and_arms.id_arms
+from boss_and_arms
+where id_boss = 10;
+
+CREATE OR REPLACE FUNCTION add_int()
+RETURNS trigger AS $$
+declare
+    kol integer := 0;
+    test integer := 0;
+    test_1 integer := 0;
+begin
+    select count(boss_and_arms.id_arms) into kol
+    from boss_and_arms
+    where id_boss = new.id_boss;
+    if(new.hp = 0)
+    then
+        if(kol = 1)
+        then
+            select boss_and_arms.id_arms into test
+            from boss_and_arms
+            where id_boss = new.id_boss;
+            update arms
+            set id_pl = 1
+            where id_arms = test;
+        end if;
+        if(kol = 2)
+        then
+            select boss_and_arms.id_arms into test
+            from boss_and_arms
+            where id_boss = new.id_boss;
+
+            select boss_and_arms.id_arms into test_1
+            from boss_and_arms
+            where id_boss = new.id_boss and id_arms not in(test);
+
+            update arms
+            set id_pl = 1
+            where id_arms = test;
+
+            update arms
+            set id_pl = 1
+            where id_arms = test_1;
+        end if;
+    end if;
+
+    return new;
+end;
+$$ LANGUAGE plpgsql;
+
+SELECT add_int() AS answer;
+
+CREATE TRIGGER check_update
+BEFORE update ON boss
+FOR EACH ROW
+execute procedure add_int();
+
+DROP TRIGGER check_update ON boss;
+
+CREATE OR REPLACE FUNCTION dell_int()
+RETURNS trigger AS $$
+declare
+    kol integer := 0;
+    test integer := 0;
+    test_1 integer := 0;
+begin
+    select count(boss_and_arms.id_arms) into kol
+    from boss_and_arms
+    where id_boss = new.id_boss;
+    if(new.hp > 0 and old.hp = 0)
+    then
+        if(kol = 1)
+        then
+            select boss_and_arms.id_arms into test
+            from boss_and_arms
+            where id_boss = new.id_boss;
+            update arms
+            set id_pl = NULL
+            where id_arms = test;
+        end if;
+        if(kol = 2)
+        then
+            select boss_and_arms.id_arms into test
+            from boss_and_arms
+            where id_boss = new.id_boss;
+
+            select boss_and_arms.id_arms into test_1
+            from boss_and_arms
+            where id_boss = new.id_boss and id_arms not in(test);
+
+            update arms
+            set id_pl = NULL
+            where id_arms = test;
+
+            update arms
+            set id_pl = NULL
+            where id_arms = test_1;
+        end if;
+    end if;
+
+    return new;
+end;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_update_on_dell
+BEFORE update ON boss
+FOR EACH ROW
+execute procedure dell_int();
+
+DROP TRIGGER check_update_on_dell ON boss;
